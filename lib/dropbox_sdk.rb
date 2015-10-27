@@ -14,10 +14,10 @@ module Dropbox # :nodoc:
   WEB_SERVER = "www.dropbox.com"
 
   SERVERS = {
-    :api => API_SERVER,
-    :content => API_CONTENT_SERVER,
-    :notify => API_NOTIFY_SERVER,
-    :web => WEB_SERVER
+      :api => API_SERVER,
+      :content => API_CONTENT_SERVER,
+      :notify => API_NOTIFY_SERVER,
+      :web => WEB_SERVER
   }
 
   API_VERSION = 1
@@ -101,7 +101,7 @@ module Dropbox # :nodoc:
       http.request(request)
     rescue OpenSSL::SSL::SSLError => e
       raise DropboxError.new("SSL error connecting to Dropbox.  " +
-                             "There may be a problem with the set of certificates in \"#{Dropbox::TRUSTED_CERT_FILE}\".  #{e.message}")
+                                 "There may be a problem with the set of certificates in \"#{Dropbox::TRUSTED_CERT_FILE}\".  #{e.message}")
     end
   end
 
@@ -244,7 +244,7 @@ class DropboxSession < DropboxSessionBase  # :nodoc:
 
   def build_auth_header(token) # :nodoc:
     header = "OAuth oauth_version=\"1.0\", oauth_signature_method=\"PLAINTEXT\", " +
-      "oauth_consumer_key=\"#{URI.escape(@consumer_key)}\", "
+        "oauth_consumer_key=\"#{URI.escape(@consumer_key)}\", "
     if token
       key = URI.escape(token.key)
       secret = URI.escape(token.secret)
@@ -435,11 +435,11 @@ class DropboxOAuth2FlowBase  # :nodoc:
 
   def _get_authorize_url(redirect_uri, state)
     params = {
-      "client_id" => @consumer_key,
-      "response_type" => "code",
-      "redirect_uri" => redirect_uri,
-      "state" => state,
-      "locale" => @locale,
+        "client_id" => @consumer_key,
+        "response_type" => "code",
+        "redirect_uri" => redirect_uri,
+        "state" => state,
+        "locale" => @locale,
     }
 
     host = Dropbox::WEB_SERVER
@@ -464,10 +464,10 @@ class DropboxOAuth2FlowBase  # :nodoc:
     request.add_field('Authorization', 'Basic ' + Base64.encode64(client_credentials).chomp("\n"))
 
     params = {
-      "grant_type" => "authorization_code",
-      "code" => code,
-      "redirect_uri" => original_redirect_uri,
-      "locale" => @locale,
+        "grant_type" => "authorization_code",
+        "code" => code,
+        "redirect_uri" => original_redirect_uri,
+        "locale" => @locale,
     }
 
     request.set_form_data(Dropbox::clean_params(params))
@@ -600,7 +600,7 @@ class DropboxOAuth2Flow < DropboxOAuth2FlowBase
 
     if not error.nil? and not code.nil?
       raise BadRequestError.new("Query parameters 'code' and 'error' are both set;" +
-                                " only one must be set.")
+                                    " only one must be set.")
     end
     if error.nil? and code.nil?
       raise BadRequestError.new("Neither query parameter 'code' or 'error' is set.")
@@ -624,7 +624,7 @@ class DropboxOAuth2Flow < DropboxOAuth2FlowBase
     end
     if not Dropbox::safe_string_equals(csrf_token_from_session, given_csrf_token)
       raise CsrfError.new("Expected #{csrf_token_from_session.inspect}, " +
-                          "got #{given_csrf_token.inspect}.")
+                              "got #{given_csrf_token.inspect}.")
     end
     @session.delete(@csrf_token_session_key)
 
@@ -815,8 +815,8 @@ class DropboxClient
   def put_file(to_path, file_obj, overwrite=false, parent_rev=nil)
     path = "/files_put/#{@root}#{format_path(to_path)}"
     params = {
-      'overwrite' => overwrite.to_s,
-      'parent_rev' => parent_rev,
+        'overwrite' => overwrite.to_s,
+        'parent_rev' => parent_rev,
     }
 
     headers = {"Content-Type" => "application/octet-stream"}
@@ -930,8 +930,8 @@ class DropboxClient
 
   def partial_chunked_upload(data, upload_id=nil, offset=nil)  #:nodoc
     params = {
-      'upload_id' => upload_id,
-      'offset' => offset,
+        'upload_id' => upload_id,
+        'offset' => offset,
     }
     headers = {'Content-Type' => "application/octet-stream"}
     @session.do_put '/chunked_upload', params, headers, data, :content
@@ -977,7 +977,7 @@ class DropboxClient
   def get_file_impl(from_path, rev=nil) # :nodoc:
     path = "/files/#{@root}#{format_path(from_path)}"
     params = {
-      'rev' => rev,
+        'rev' => rev,
     }
     @session.do_get path, params, :content
   end
@@ -1018,9 +1018,9 @@ class DropboxClient
   #   https://www.dropbox.com/developers/reference/api#fileops-copy
   def file_copy(from_path, to_path)
     params = {
-      "root" => @root,
-      "from_path" => format_path(from_path, false),
-      "to_path" => format_path(to_path, false),
+        "root" => @root,
+        "from_path" => format_path(from_path, false),
+        "to_path" => format_path(to_path, false),
     }
     response = @session.do_post "/fileops/copy", params
     Dropbox::parse_response(response)
@@ -1037,8 +1037,8 @@ class DropboxClient
   #    https://www.dropbox.com/developers/reference/api#fileops-create-folder
   def file_create_folder(path)
     params = {
-      "root" => @root,
-      "path" => format_path(path, false),
+        "root" => @root,
+        "path" => format_path(path, false),
     }
     response = @session.do_post "/fileops/create_folder", params
 
@@ -1056,8 +1056,8 @@ class DropboxClient
   #    https://www.dropbox.com/developers/reference/api#fileops-delete
   def file_delete(path)
     params = {
-      "root" => @root,
-      "path" => format_path(path, false),
+        "root" => @root,
+        "path" => format_path(path, false),
     }
     response = @session.do_post "/fileops/delete", params
     Dropbox::parse_response(response)
@@ -1076,9 +1076,9 @@ class DropboxClient
   #    https://www.dropbox.com/developers/reference/api#fileops-delete
   def file_move(from_path, to_path)
     params = {
-      "root" => @root,
-      "from_path" => format_path(from_path, false),
-      "to_path" => format_path(to_path, false),
+        "root" => @root,
+        "from_path" => format_path(from_path, false),
+        "to_path" => format_path(to_path, false),
     }
     response = @session.do_post "/fileops/move", params
     Dropbox::parse_response(response)
@@ -1110,15 +1110,64 @@ class DropboxClient
   #   https://www.dropbox.com/developers/reference/api#metadata
   def metadata(path, file_limit=25000, list=true, hash=nil, rev=nil, include_deleted=false, include_media_info=false)
     params = {
-      "file_limit" => file_limit.to_s,
-      "list" => list.to_s,
-      "include_deleted" => include_deleted.to_s,
-      "hash" => hash,
-      "rev" => rev,
-      "include_media_info" => include_media_info
+        "file_limit" => file_limit.to_s,
+        "list" => list.to_s,
+        "include_deleted" => include_deleted.to_s,
+        "hash" => hash,
+        "rev" => rev,
+        "include_media_info" => include_media_info
     }
 
     response = @session.do_get "/metadata/#{@root}#{format_path(path)}", params
+    if response.kind_of? Net::HTTPRedirection
+      raise DropboxNotModified.new("metadata not modified")
+    end
+    Dropbox::parse_response(response)
+  end
+
+  # Retrieves metadata about a shared link. Unlike most other Core API calls,
+  # this call does not require OAuth authentication. If the request is
+  # user-authenticated and the file is in the user's Dropbox, in_dropbox will
+  # be true and the path will be the path to the file.
+  #
+  # Arguments:
+  # * link: The URL of the shared link.
+  # * path: The path to the file or folder.
+  # * file_limit: The maximum number of file entries to return within
+  #   a folder. If the number of files in the directory exceeds this
+  #   limit, an exception is raised. The server will return at max
+  #   25,000 files within a folder.
+  # * list: Whether to list all contained files (only applies when
+  #   path refers to a folder).
+  # * client_id: When making a call without an authenticated user,
+  #   the app key and secret can be passed either via HTTP basic
+  #   authentication or in POST parameters. If POST parameters are used,
+  #   the app key should be specified here.
+  # * client_secret: When making a call without an authenticated user,
+  #   the app secret should be specified here.
+  # * hash: Every directory listing has a hash parameter attached that
+  #   can then be passed back into this function later to save on
+  #   bandwidth. Rather than returning an unchanged folder's contents, if
+  #   the hash matches a DropboxNotModified exception is raised.
+  # * include_media_info: Specifies to include media info, such as time_taken for photos
+  #
+  # Returns:
+  # * A Hash object with the metadata of the file or folder (and contained files if
+  #   appropriate).  For a detailed description of what this call returns, visit:
+  #   https://www.dropbox.com/developers/reference/api#metadata-link
+  def metadata_link(link, path=nil, file_limit=25000, list=true, hash=nil, client_id=nil, client_secret=false, include_media_info=false)
+    params = {
+        "link" => link,
+        "file_limit" => file_limit.to_s,
+        "path" => path,
+        "list" => list.to_s,
+        "client_id" => client_id,
+        "client_secret" => client_secret,
+        "hash" => hash,
+        "include_media_info" => include_media_info
+    }
+
+    response = @session.do_get "/metadata/link", params
     if response.kind_of? Net::HTTPRedirection
       raise DropboxNotModified.new("metadata not modified")
     end
@@ -1141,9 +1190,9 @@ class DropboxClient
   #   https://www.dropbox.com/developers/reference/api#search
   def search(path, query, file_limit=1000, include_deleted=false)
     params = {
-      'query' => query,
-      'file_limit' => file_limit.to_s,
-      'include_deleted' => include_deleted.to_s
+        'query' => query,
+        'file_limit' => file_limit.to_s,
+        'include_deleted' => include_deleted.to_s
     }
 
     response = @session.do_get "/search/#{@root}#{format_path(path)}", params
@@ -1165,7 +1214,7 @@ class DropboxClient
   #   https://www.dropbox.com/developers/reference/api#revisions
   def revisions(path, rev_limit=1000)
     params = {
-      'rev_limit' => rev_limit.to_s
+        'rev_limit' => rev_limit.to_s
     }
 
     response = @session.do_get "/revisions/#{@root}#{format_path(path)}", params
@@ -1184,7 +1233,7 @@ class DropboxClient
   #   https://www.dropbox.com/developers/reference/api#search
   def restore(path, rev)
     params = {
-      'rev' => rev.to_s
+        'rev' => rev.to_s
     }
 
     response = @session.do_post "/restore/#{@root}#{format_path(path)}", params
@@ -1327,8 +1376,8 @@ class DropboxClient
   # the actual path.  The _metadata_ dicts have the original, case-preserved path.
   def delta(cursor=nil, path_prefix=nil)
     params = {
-      'cursor' => cursor,
-      'path_prefix' => path_prefix,
+        'cursor' => cursor,
+        'path_prefix' => path_prefix,
     }
 
     response = @session.do_post "/delta", params
@@ -1353,8 +1402,8 @@ class DropboxClient
   #   before calling #longpoll_delta again.
   def longpoll_delta(cursor, timeout=30)
     params = {
-      'cursor' => cursor,
-      'timeout' => timeout
+        'cursor' => cursor,
+        'timeout' => timeout
     }
 
     response = @session.do_get "/longpoll_delta", params, :notify
@@ -1373,7 +1422,7 @@ class DropboxClient
   def thumbnail_impl(from_path, size='large') # :nodoc:
     path = "/thumbnails/#{@root}#{format_path(from_path, true)}"
     params = {
-      "size" => size
+        "size" => size
     }
     @session.do_get path, params, :content
   end
